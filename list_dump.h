@@ -48,6 +48,9 @@ void print_elements (void *array, unsigned head, unsigned tail, FILE* fp_dump, c
                      const unsigned weight, const char *symb);
 void do_print_double_elements (double* array, unsigned head, unsigned tail, FILE* fp_dump, const char *symb);
 void do_print_unsigned_elements (unsigned *array, unsigned head, unsigned tail, FILE* fp_dump, const char *symb);
+void do_align_double_zero_elem (double zero_elem, FILE* fp_dump, const char *symb);
+void do_align_unsigned_zero_elem (unsigned zero_elem, FILE* fp_dump, const char *symb);
+void print_closing_bracket (FILE* fp_dump);
 
 
 //-------------------------------------------Константы--------------------------------------------------------------------------
@@ -101,7 +104,7 @@ const unsigned DATA_WEIGHT                   = 400;
 #define        DATA_NULL_ARROW_STYLE           "style = \"dashed\""
 #define        DATA_ARRAY_NAME                 "data"
 #define        NEXT_ARRAY_NAME                 "next"
-#define        PREV_ARRAY_NAME                 " prev"
+#define        PREV_ARRAY_NAME                 "prev"
 #define        PREV_SPECIFIER                  "%u"
 #define        NEXT_SPECIFIER                  "%u"
 #define        DATA_SPECIFIER                  "%lf"

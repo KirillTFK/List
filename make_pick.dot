@@ -1,0 +1,93 @@
+digraph
+{
+    bgcolor="#000000";
+    rankdir = LR;
+    edge [style="invis"];
+    node [fontcolor = white, shape = tab, color = "#818181"];
+
+    comment = "Тут цикл, от 0 до величины списка";
+    "[0]"->"[1]"->"[2]"->"[3]"->"[4]"->"[5]"->"[6]"->"[7]"->"[8]"->"[9]"->"[10]"[weight = 400];
+
+    node [shape = "box3d", color = green];
+    "[0]"->"Poison";
+    "Poison" [color = red];
+
+
+    comment = "Тут цикл, заполняющий значения из спсика";
+    "Poison"->10->20->30->40->50->25[weight = 400];
+
+
+    comment = "Тут  цикл, заполняющий значения из списка и номера ячеек";
+
+    {rank = same; "Poison"; "[0]"}
+    {rank = same; "10"; "[1]"}
+    {rank = same; "20"; "[2]"}
+    {rank = same; "30"; "[3]"}
+    {rank = same; "40"; "[4]"}
+    {rank = same; "50"; "[5]"}
+    {rank = same; "25"; "[6]"}
+
+    "Poison"->"Poison"[color = white, style = "dashed"];
+    "10"->"20"[color = white, style = "", label = "1", fontcolor = white];
+    "20"->"25"[color = white, style = "", label = "2", fontcolor = white];
+    "25"->"30"[color = white, style = "", label = "3", fontcolor = white];
+    "30"->"40"[color = white, style = "", label = "4", fontcolor = white];
+    "40"->"50"[color = white, style = "", label = "5", fontcolor = white];
+
+    "NEXT:"[shape=none, fontcolor = "#03afe8"];
+    "Poison"->"NEXT:";
+    node [shape = "polygon"];
+    "NEXT:"->"->0";
+    "->0"[color = red];
+
+
+    comment ="Тут цикл, заполняющий данными из массива next";
+    "->0"->"->2"->"->6"->"->4"->"->5"->"->NULL"->"->3"[weight=400];
+
+    comment="Тут цикл, заполяющий значения некст и соответсвующие им ячекйки";
+    {rank = same; "NEXT:";  "[0]"}
+    {rank = same; "->0"; "[0]"}
+    {rank = same; "->2"; "[1]"}
+    {rank = same; "->6"; "[2]"}
+    {rank = same; "->4"; "[3]"}
+    {rank = same; "->5"; "[4]"}
+    {rank = same; "->NULL"; "[5]"}
+    {rank = same; "->3"; "[6]"}
+
+    comment="Тут цикл, заполняющий значения некст и значения, лежащие по адресу из ячеек некст в ячейках некст";
+    "->0"->"->0"   [color = blue, style="dashed"];
+    "->2"->"->6"   [color = blue, style = "", label = "1", fontcolor = white];
+    "->6"->"->3"   [color = blue, style = "", label = "2", fontcolor = white];
+    "->3"->"->4"   [color = blue, style = "", label = "3", fontcolor = white];
+    "->4"->"->5"   [color = blue, style = "", label = "4", fontcolor = white];
+    "->5"->"->NULL"[color = blue, style = "", label = "5", fontcolor = white];
+    "->NULL"->"->0"[color = blue, style="dashed"];
+
+    "PREV:"[shape=none, fontcolor = "#bb2649"];
+    "->0"->"PREV:";
+    node [shape = "polygon"];
+    "PREV:"->"<-0";
+    "<-0"[color=red];
+
+    "<-0"->"<-NULL"->"<-1"->"<-6"->"<-3"->"<-4"->"<-2"[weight=400];
+
+
+    comment="Тут цикл, заполняющий значения prev и соответсвующие номера ячеек";
+    {rank = same; "PREV:"; "[0]"}
+    {rank = same; "<-0"; "[0]"}
+    {rank = same; "<-NULL";"[1]"}
+    {rank = same; "<-1";"[2]"}
+    {rank = same; "<-6";"[3]"}
+    {rank = same; "<-3";"[4]"}
+    {rank = same; "<-4";"[5]"}
+    {rank = same; "<-2";"[6]"}
+
+    comment="Тут цикл, заполняющий значения прев и значения прев ячеек, на которые указывает текущая, начиная с NULL и заканчивая самым большим, но метки в обратном порядке";
+    "<-0"->"<-0"   [style = "dashed", color = red];
+    "<-NULL"->"<-0"[style = "dashed", color = red];
+    "<-1"->"<-NULL"[style = "", label = "5", color = red, fontcolor = white];
+    "<-6"->"<-2"   [style = "", label = "3", color = red, fontcolor = white];
+    "<-3"->"<-6"   [style = "", label = "2", color = red, fontcolor = white];
+    "<-4"->"<-3"   [style = "", label = "1", color = red, fontcolor = white];
+    "<-2"->"<-1"   [style = "", label = "4", color = red, fontcolor = white];
+}

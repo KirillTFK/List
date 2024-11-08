@@ -28,24 +28,29 @@ int main (void)
     lst.data[0] = NAN;
     lst.next[0] = 0;
     lst.prev[0] = 0;
+    lst.tail = 1;
 
-    for (unsigned i = 1; i <= lst.head; i++ )
+    for (unsigned i = lst.tail; i <= lst.head; i++ )
     {
         lst.data[i] = i*10;
     }
 
-    for (unsigned i = 1; i <= lst.head -1; i++)
-    {
-        lst.next[i] = i+1;
-    }
+    lst.data[6] = 25;
 
-    lst.next[lst.head] = 0;
 
-    lst.prev[lst.tail] = 0;
-    for (unsigned i = lst.tail +1; i <= lst.head; i++)
-    {
-        lst.prev[i] = i-1;
-    }
+    lst.next[1] = 2;
+    lst.next[2] = 6;
+    lst.next[4] = 5;
+    lst.next[5] = 0;
+    lst.next[6] = 3;
+    lst.next[3] = 4;
+
+    lst.prev[1] = 0;
+    lst.prev[2] = 1;
+    lst.prev[3] = 6;
+    lst.prev[4] = 3;
+    lst.prev[5] = 4;
+    lst.prev[6] = 2;
 
     list_dump (&lst, fp_dump);
 }

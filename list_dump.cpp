@@ -1,4 +1,3 @@
-
 #include <stdio.h>
 #include <math.h>
 #include <string.h>
@@ -23,6 +22,7 @@ void list_dump (struct list_info *lst, FILE* fp_dump)
 
     print_prev (lst, fp_dump);
 
+    print_closing_bracket (fp_dump);
 }
 
 void print_preamble (FILE* fp_dump)
@@ -106,8 +106,15 @@ void print_arrows (void *array, struct list_info *lst, unsigned *labels_array, F
         do_print_double_arrows   (lst,  labels_array, fp_dump, symb, arrow_style, arrow_color, arrow_fontcolor);
 
     else if (!strcmp (type, "unsigned"))
-        do_print_unsigned_arrows ((unsigned*)array, lst->head, lst->tail, labels_array, fp_dump, symb,
+    {
+        if (!strcmp (array_name, "prev"))
+        {
+            turn_over_labels_array (labels_array, lst->head, lst->tail);
+        }
+
+        do_print_unsigned_arrows ((unsigned*)array, lst->tail, lst->head, labels_array, fp_dump, symb,
                                   arrow_style, arrow_color, arrow_fontcolor,null_style);
+    }
 
     else
     {
@@ -148,13 +155,14 @@ void do_print_double_arrows (struct list_info *lst, unsigned *labels_array, FILE
             continue;
     }
 
+    fprintf (fp_dump, "\n\t");
 }
 
 void turn_over_labels_array (unsigned *labels_array, unsigned head, unsigned tail)
 {
     for (unsigned i = tail; i <= head; i++)
     {
-        labels_array[i] = head-tail+1 - labels_array[i];
+        labels_array[i] = head-tail+1 - labels_array[i] +1;
     }
 }
 
@@ -184,7 +192,7 @@ void do_print_unsigned_arrows (unsigned *array, unsigned tail, unsigned head,  u
                      labels_array[i]);
         }
     }
-
+    fprintf (fp_dump, "\n\t");
 }
 
 
@@ -213,7 +221,7 @@ void fill_labels_array (struct list_info *lst, unsigned *labels_array, unsigned 
     for (unsigned i = lst->head - lst->tail + 1; i != 0; i-- )
     {
         labels_array[elder_elem_index] = i;
-        elder_elem_index = lst->prev[i];
+        elder_elem_index = lst->prev[elder_elem_index];
     }
 }
 
@@ -230,7 +238,6 @@ unsigned find_elder_elem_index (struct list_info *lst)
         else
             continue;
     }
-
     return i;
 }
 
@@ -250,15 +257,24 @@ void align_elems (void *array, unsigned head, unsigned tail, FILE* fp_dump, cons
 
     if (!strcmp (array_name, "data"))
     {
-        do_align_double_elems   ((double*)array, head, tail, fp_dump, symb);
+        do_align_double_zero_elem (*((double*)array), fp_dump, symb);
+        do_align_double_elems     ((double*)array, head, tail, fp_dump, symb);
     }
 
     else
     {
-        do_align_unsigned_elems ((unsigned*)array, head, tail, fp_dump, symb);
+        do_align_unsigned_zero_elem (*((unsigned*)array), fp_dump, symb);
+        do_align_unsigned_elems     ((unsigned*)array, head, tail, fp_dump, symb);
     }
 
 }
+
+void do_align_double_zero_elem (double zero_elem, FILE* fp_dump, const char *symb)
+{
+    fprintf (fp_dump, "%s\"%s%lf\"; \"[0]\"}\n\t", ALIGN_BEGINNING, symb, zero_elem);
+}
+
+
 
 void do_align_unsigned_elems (unsigned *array, unsigned head, unsigned tail, FILE* fp_dump, const char *symb)
 {
@@ -271,6 +287,11 @@ void do_align_unsigned_elems (unsigned *array, unsigned head, unsigned tail, FIL
         else
             fprintf (fp_dump,"%s\"%sNULL\"; \"[%u]\"}\n\t", ALIGN_BEGINNING, symb, i);
     }
+}
+
+void do_align_unsigned_zero_elem (unsigned zero_elem, FILE* fp_dump, const char *symb)
+{
+    fprintf (fp_dump, "%s\"%s%u\"; \"[0]\"}\n\t", ALIGN_BEGINNING, symb, zero_elem);
 }
 
 void do_align_double_elems (double *array, unsigned head, unsigned tail, FILE* fp_dump, const char *symb)
@@ -335,14 +356,19 @@ void print_elements (void *array, unsigned head, unsigned tail, FILE* fp_dump, c
         do_print_unsigned_elements ((unsigned*)array, head, tail, fp_dump, symb);
     }
 
-    if ((unsigned)array_name[head] == 0 && strcmp(array_name, "data") != 0)
+    if (*((unsigned*)array + head) == 0 && strcmp(array_name, "data") != 0)
     {
         fprintf (fp_dump,"\"%sNULL\"[weight = %u]\n\n\t",symb, weight);
     }
 
-    else
+    else if (!strcmp (array_name, "data"))
     {
         fprintf (fp_dump, "\"%s%lf\"[weight = %u]\n\n\t",symb ,*((double*)array + head) ,weight);
+    }
+
+    else
+    {
+        fprintf (fp_dump, "\"%s%u\"[weight = %u]\n\n\t", symb, *((unsigned*)array + head), weight);
     }
 
 }
@@ -373,4 +399,9 @@ void do_print_unsigned_elements (unsigned *array, unsigned head, unsigned tail, 
         }
     }
 
+}
+
+void print_closing_bracket (FILE* fp_dump)
+{
+    fprintf (fp_dump, "}\n");
 }
