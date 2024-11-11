@@ -18,7 +18,7 @@ OBLIGATORE= -D _DEBUG -ggdb3 -std=c++17 -O0 -Wall -Wextra -Weffc++ \
 		-Wlarger-than=8192 -Wstack-usage=8192 -pie -fPIE -Werror=vla -D DOUBLE_STACK -D NDEBUG
 target = test
 override CFLAGS += $(OBLIGATORE)
-CSRC = test.cpp list_dump.cpp
+CSRC = test.cpp list_dump.cpp constructor.cpp destructor.cpp
 COBJ = $(CSRC:%.cpp=%.o)
 
 .PHONY: all clean
