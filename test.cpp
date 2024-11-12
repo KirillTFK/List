@@ -30,21 +30,31 @@ int main (void)
     list_dump (lst, fp_dump);
     make_bash_script (fp_bash_script, current_command, current_file_name, file_counter);
     make_next_dump_file (&fp_dump, current_file_name, &file_counter);
+    printf ("%u\n", lst->tail);
 
     insert_elem_after (lst, 100.3, 1);
     list_dump (lst, fp_dump);
     make_bash_script (fp_bash_script, current_command, current_file_name, file_counter);
     make_next_dump_file (&fp_dump, current_file_name, &file_counter);
+    printf ("%u\n", lst->tail);
 
     insert_elem_after (lst, 101.3, 2);
     list_dump (lst, fp_dump);
     make_bash_script (fp_bash_script, current_command, current_file_name, file_counter);
     make_next_dump_file (&fp_dump, current_file_name, &file_counter);
+    printf ("%u\n", lst->tail);
 
     delete_elem (lst, 2);
     list_dump (lst, fp_dump);
     make_bash_script (fp_bash_script, current_command, current_file_name, file_counter);
     make_next_dump_file (&fp_dump, current_file_name, &file_counter);
+    printf ("%u\n", lst->tail);
+
+    insert_elem_after (lst, 101.3, 1);
+    list_dump (lst, fp_dump);
+    make_bash_script (fp_bash_script, current_command, current_file_name, file_counter);
+    make_next_dump_file (&fp_dump, current_file_name, &file_counter);
+    printf ("%u\n", lst->tail);
 
     destroy_list (lst);
 
@@ -72,21 +82,24 @@ int main (void)
 
 void insert_elem_after (struct list_info *lst, double elem, int anchor_position)
 {
-    int free_pos = 0;
-
-    if(!(free_pos = find_free_pos (lst)))
+    if (lst->free == 0)
+    {
+        printf ("НЕВОЗМОЖНО ВСТАВИТЬ СВОБОДНЫЙ ЭЛЕМЕНТ, НЕТ МЕСТА\n");
         return;
+    }
 
     if (lst->head == 0 || lst->tail == 0)
     {
+        lst->data[lst->free] = elem;
         printf ("СПИСОК ПУСТОЙ, POSITION ИГНОРИРУЕТСЯ\n");
 
-        link_last_elem (lst, free_pos);
+        link_last_elem (lst, lst->free);
     }
 
     else if ((unsigned)anchor_position == lst->tail)
     {
-        link_last_elem (lst, free_pos);
+        lst->data[lst->free] = elem;
+        link_last_elem (lst, lst->free);
     }
 
     else if (isnan(lst->data[anchor_position]))
@@ -104,29 +117,31 @@ void insert_elem_after (struct list_info *lst, double elem, int anchor_position)
 
     else
     {
-        link_elem_to_others_after (lst, anchor_position, free_pos);
+        lst->data[lst->free] = elem;
+        link_elem_to_others_after (lst, anchor_position, lst->free);
     }
-
-    lst->data[free_pos] = elem;
 }
 
 void insert_elem_before (struct list_info *lst, double elem, int anchor_position)
 {
-    int free_pos = 0;
-
-    if (!(free_pos = find_free_pos (lst)))
+    if (lst->free == 0)
+    {
+        printf ("НЕВОЗМОЖНО ВСТАВИТЬ СВОБОДНЫЙ ЭЛЕМЕНТ, НЕТ МЕСТА\n");
         return;
+    }
 
     if (lst->head == 0 || lst->tail == 0)
     {
         printf ("СПИСОК ПУСТОЙ\n");
 
-        link_first_elem (lst, anchor_position);
+        lst->data[lst->free] = elem;
+        link_first_elem (lst, lst->free);
     }
 
     else if ((unsigned)anchor_position == lst->head)
     {
-        link_first_elem (lst, anchor_position);
+        lst->data[lst->free] = elem;
+        link_first_elem (lst, lst->free);
     }
 
     else if (isnan(lst->data[anchor_position]))
@@ -143,14 +158,22 @@ void insert_elem_before (struct list_info *lst, double elem, int anchor_position
 
     else
     {
-        link_elem_to_others_before (lst, anchor_position, free_pos);
+        lst->data[lst->free] = elem;
+        link_elem_to_others_before (lst, anchor_position, lst->free);
     }
 
-    lst->data[free_pos] = elem;
 }
 
 void link_elem_to_others_before (struct list_info *lst, int anchor_position, int new_elem_pos)
 {
+    printf ("%d %d\n", lst->free, lst->next[lst->free]);
+
+    if (lst->free == -(lst->next[lst->free]))
+        lst->free = 0;
+
+    else
+        lst->free = -(lst->next[lst->free]);
+
     lst->next[lst->prev[anchor_position]]   = new_elem_pos;
     lst->prev[new_elem_pos]                 = lst->prev[anchor_position];
     lst->prev[anchor_position]              = new_elem_pos;
@@ -171,6 +194,14 @@ int find_free_pos (struct list_info *lst)
 
 void link_elem_to_others_after (struct list_info *lst, int anchor_position, int new_elem_pos)
 {
+    printf ("%d %d\n", lst->free, lst->next[lst->free]);
+
+    if (lst->free == -(lst->next[lst->free]))
+        lst->free = 0;
+
+    else
+        lst->free = -(lst->next[lst->free]);
+
     lst->next[new_elem_pos]                 = lst->next[anchor_position];
     lst->prev[lst->next[anchor_position]]   = new_elem_pos;
     lst->next[anchor_position]              = new_elem_pos;
@@ -183,6 +214,14 @@ void link_elem_to_others_after (struct list_info *lst, int anchor_position, int 
 
 void link_first_elem (struct list_info *lst, int new_elem_pos)
 {
+    printf ("%d %d\n", lst->free, lst->next[lst->free]);
+
+    if (lst->free == -(lst->next[lst->free]))
+        lst->free = 0;
+
+    else
+        lst->free = -(lst->next[lst->free]);
+
     if (lst->head != 0)
     {
         lst->prev[lst->head] = new_elem_pos;
@@ -202,6 +241,13 @@ void link_first_elem (struct list_info *lst, int new_elem_pos)
 
 void link_last_elem (struct list_info *lst, int new_elem_pos)
 {
+    printf ("%d %d\n", lst->free, lst->next[lst->free]);
+    if (lst->free == -(lst->next[lst->free]))
+        lst->free = 0;
+
+    else
+        lst->free = -(lst->next[lst->free]);
+
     if (lst->tail != 0)
     {
         lst->next[lst->tail] = new_elem_pos;
@@ -279,8 +325,10 @@ void delete_elem (struct list_info *lst, int deleted_elem_pos)
 void feel_deleted_elem (struct list_info *lst, int deleted_elem_pos)
 {
     lst->data[deleted_elem_pos] = NAN;
-    lst->next[deleted_elem_pos] = -1;
+    lst->next[deleted_elem_pos] = -lst->free;
     lst->prev[deleted_elem_pos] = -1;
+
+    lst->free = deleted_elem_pos;
 }
 
 

@@ -136,7 +136,7 @@ void do_print_double_arrows (struct list_info *lst, unsigned *labels_array, FILE
 {
     for (unsigned i = 1; i <= (unsigned)lst->list_size; i++ )
     {
-        if (lst->next[i] != 0 && lst->next[i] != -1)
+        if (lst->next[i] != 0 && lst->next[i] >= 0 )
         {
             fprintf (fp_dump, "\"%s%lf\n[%u]\"->\"%s%lf\n[%d]\" " "[%s, %s, %s, label = \"%u\"]\n\t", symb, lst->data[i], i, symb,
                      lst->data[lst->next[i]], lst->next[i], arrow_style, arrow_color, arrow_fontcolor,
@@ -169,7 +169,7 @@ void do_print_int_arrows (int *array, unsigned list_size,  unsigned *labels_arra
 {
     for (unsigned i = 1; i <= list_size; i++)
     {
-        if (array[array[i]] == 0 && array[i] != 0 && array[i] != -1)
+        if (array[array[i]] == 0 && array[i] != 0 && array[i] >= 0)
         {
             fprintf (fp_dump, "\"%s%d\n[%u]\"->\"%sNULL\n[%d]\" " "[%s, %s, %s, label = \"%u\"]\n\t", symb, array[i], i, symb, array[i],
                      arrow_style, arrow_color, arrow_fontcolor, labels_array[i]);
@@ -182,7 +182,7 @@ void do_print_int_arrows (int *array, unsigned list_size,  unsigned *labels_arra
                      labels_array[i]);
         }
 
-        else if (array[i] != -1)
+        else if (array[i] >= 0)
         {
             fprintf (fp_dump, "\"%s%d\n[%u]\"->\"%s%d\n[%d]\" " "[%s, %s, %s, label = \"%u\"]\n\t", symb, array[i], i, symb,
                      array[array[i]], array[i], arrow_style, arrow_color, arrow_fontcolor,

@@ -9,7 +9,7 @@ struct list_info
     double   *data;
     int      *next;
     int      *prev;
-
+    int      free;
 };
 //-------------------------------------------Функции--------------------------------------------------------------------------------------------------------
 void insert_elem_after (struct list_info *lst, double elem, int anchor_position);

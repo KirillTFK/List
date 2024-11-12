@@ -62,10 +62,16 @@ void designate_free_pos (struct list_info *lst)
         exit (EXIT_FAILURE);
     }
 
-    for (unsigned i = lst->tail + 1; i <= (unsigned)lst->list_size; i++ )
+    for (int i = (int)lst->head + 1; i < lst->list_size; i++ )
     {
         lst->prev[i] = -1;
-        lst->next[i] = -1;
+        lst->next[i] = -(i+1);
         lst->data[i] = NAN;
     }
+
+    lst->prev[lst->list_size] = -1;
+    lst->next[lst->list_size] = -lst->list_size;
+    lst->data[lst->list_size] = NAN;
+
+    lst->free = 1;
 }
